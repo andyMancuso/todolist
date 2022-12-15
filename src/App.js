@@ -16,7 +16,7 @@ const App = () => {
    */
   const handleChange = (e) => {
     const newText = e.target.value
-    setTodo (newText)
+    setTodo(newText)
   }
 
   const handleSubmit = (e) => {
@@ -24,6 +24,11 @@ const App = () => {
     const list = [...todos, todo]
     setTodos(list)
     setTodo("")
+  }
+
+  const deleteTodo = (itemClicked) => {
+    const newTodos = todos.filter(item => item !== itemClicked)
+    setTodos(newTodos)
   }
 
 
@@ -44,7 +49,12 @@ const App = () => {
       </form>
 
       {todos.map(item => {
-        return <p key={item}>- {item}</p>
+        return (
+          <div key={item}>
+            <span >- {item}</span>
+            <button onClick={ () => deleteTodo(item)}>X</button> 
+          </div>
+        )
       })}
       
     </div>
