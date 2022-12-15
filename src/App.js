@@ -21,6 +21,13 @@ const App = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    const alreadyExist = todos.includes(todo)
+    
+    if (alreadyExist) {
+      alert("El todo que intentas agregar ya existe en la lista")
+      return
+    }
+
     const list = [...todos, todo]
     setTodos(list)
     setTodo("")
