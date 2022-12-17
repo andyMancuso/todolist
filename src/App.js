@@ -11,11 +11,11 @@ const App = () => {
       checked: false
     }, { 
       description: 'Cortar uñas',
-      checked: false
+      checked: true
     }
   ])
   
-  const [todo, setTodo] = useState ('')
+  const [inputValue, setInputValue] = useState ('')
 
   const [currentFilter, setCurrentFilter] = useState('Todas')
 
@@ -25,12 +25,12 @@ const App = () => {
    */
   const handleChange = (e) => {
     const newText = e.target.value
-    setTodo(newText)
+    setInputValue(newText)
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    const alreadyExist = todos.some(item => item.description === todo)
+    const alreadyExist = todos.some(item => item.description === inputValue)
   
     if (alreadyExist) {
       alert('El todo que intentas agregar ya existe en la lista')
@@ -38,22 +38,37 @@ const App = () => {
     }
 
     const newTodo = {
-      description: todo,
+      description: inputValue,
       checked: false
     }
 
     const list = [...todos, newTodo]
     setTodos(list)
-    setTodo('')
+    setInputValue('')
   }
 
   const deleteTodo = (itemClicked) => {
     const newTodos = todos.filter(item => item !== itemClicked)
     setTodos(newTodos)
+    console.log(newTodos)
   }
 
   const handleSelectChange = (e) => {
     setCurrentFilter(e.target.value)
+  }
+
+  const handleCheck = (inputCheckValue, text) => {
+    const checkedTodoIdx = todos.findIndex(item => item.description === text)
+    const checkedTodo = todos[checkedTodoIdx]
+    checkedTodo.checked = inputCheckValue
+
+    const prevTodos = todos.slice(0, checkedTodoIdx)
+    const nextTodos = todos.slice(checkedTodoIdx+1, todos.length)
+    // const prevTodos = todos.filter(item => item.description !== text)
+    const newTodos = [...prevTodos, checkedTodo, ...nextTodos]
+    setTodos(newTodos)
+    console.log(prevTodos)
+    console.log(nextTodos)
   }
 
 
@@ -72,7 +87,7 @@ const App = () => {
       
       <form onSubmit={handleSubmit}>
       <input 
-       value= {todo}
+       value= {inputValue}
        onChange={handleChange}
        placeholder='Ingresar todo...' />
 
@@ -85,6 +100,8 @@ const App = () => {
           <Todo
             key={item.description}
             text={item.description}
+            isChecked={item.checked}
+            onCheck={handleCheck}
             deleteTodo={() => deleteTodo(item)}
           />
         )

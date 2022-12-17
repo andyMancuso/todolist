@@ -1,19 +1,19 @@
 import { useState } from "react";
 
 
-const Todo = ({ text, deleteTodo }) => {
+const Todo = ({ text, deleteTodo, isChecked, onCheck }) => {
 
-  const [isChecked, setIsChecked] = useState(false)
+  
 
   const handleChange = (e) => {
-    setIsChecked(e.target.checked)
+    onCheck(e.target.checked, text)
   }
 
   return (
       <div>
         <input 
           type='checkbox'
-          value={isChecked}
+          checked={isChecked}
           onChange={handleChange}  
         />
         {' '}
