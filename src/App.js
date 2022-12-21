@@ -19,10 +19,20 @@ const App = () => {
 
   const [currentFilter, setCurrentFilter] = useState('Todas')
 
-  /**
-   * Esta función esta ligada al input 
-   * y se ejecuta al ingresar o borrar un caractér
-   */
+  
+  const filterFn = (item) => {
+    if (currentFilter === 'Completadas') {
+      return item.checked === true
+    } 
+    
+    if (currentFilter === 'Pendientes') {
+      return item.checked === false
+    }
+    
+    return true
+  }
+      
+
   const handleChange = (e) => {
     const newText = e.target.value
     setInputValue(newText)
@@ -39,7 +49,8 @@ const App = () => {
 
     const newTodo = {
       description: inputValue,
-      checked: false
+      checked: false,
+      filter: currentFilter
     }
 
     const list = [...todos, newTodo]
@@ -53,24 +64,23 @@ const App = () => {
     console.log(newTodos)
   }
 
-  const handleSelectChange = (e) => {
-    setCurrentFilter(e.target.value)
-  }
-
   const handleCheck = (inputCheckValue, text) => {
     const checkedTodoIdx = todos.findIndex(item => item.description === text)
     const checkedTodo = todos[checkedTodoIdx]
     checkedTodo.checked = inputCheckValue
-
+    
     const prevTodos = todos.slice(0, checkedTodoIdx)
     const nextTodos = todos.slice(checkedTodoIdx+1, todos.length)
-    // const prevTodos = todos.filter(item => item.description !== text)
+
     const newTodos = [...prevTodos, checkedTodo, ...nextTodos]
     setTodos(newTodos)
     console.log(prevTodos)
     console.log(nextTodos)
   }
-
+  
+  const handleSelectChange = (e) => {
+    setCurrentFilter(e.target.value)
+  }
 
   return (
     <div>
@@ -95,7 +105,7 @@ const App = () => {
       </form>
 
       
-      {todos.map(item => {
+      {todos.filter(filterFn).map(item => {
         return (
           <Todo
             key={item.description}

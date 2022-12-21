@@ -1,9 +1,5 @@
-import { useState } from "react";
-
-
 const Todo = ({ text, deleteTodo, isChecked, onCheck }) => {
 
-  
 
   const handleChange = (e) => {
     onCheck(e.target.checked, text)
@@ -27,5 +23,3 @@ const Todo = ({ text, deleteTodo, isChecked, onCheck }) => {
 }
 
 export default Todo;
-  
-// text-decoration: line-through
