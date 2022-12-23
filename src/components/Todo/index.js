@@ -1,4 +1,4 @@
-const Todo = ({ text, deleteTodo, isChecked, onCheck }) => {
+const Todo = ({ text, deleteTodo, editTodo, isChecked, onCheck }) => {
 
 
   const handleChange = (e) => {
@@ -18,6 +18,8 @@ const Todo = ({ text, deleteTodo, isChecked, onCheck }) => {
         </span>
         {' '}
         <button onClick={deleteTodo}>X</button>
+        {' '}
+        <button onClick={editTodo}>✏️</button>
       </div>
   );
 }

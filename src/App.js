@@ -15,9 +15,13 @@ const App = () => {
     }
   ])
   
-  const [inputValue, setInputValue] = useState ('')
+  const [inputValue, setInputValue] = useState('')
 
   const [currentFilter, setCurrentFilter] = useState('Todas')
+
+  const [isEditMode, setIsEditMode] = useState(false)
+
+  const [buttonText, setButtonText] = useState('Publicar')
 
   
   const filterFn = (item) => {
@@ -32,7 +36,6 @@ const App = () => {
     return true
   }
       
-
   const handleChange = (e) => {
     const newText = e.target.value
     setInputValue(newText)
@@ -61,7 +64,6 @@ const App = () => {
   const deleteTodo = (itemClicked) => {
     const newTodos = todos.filter(item => item !== itemClicked)
     setTodos(newTodos)
-    console.log(newTodos)
   }
 
   const handleCheck = (inputCheckValue, text) => {
@@ -74,13 +76,52 @@ const App = () => {
 
     const newTodos = [...prevTodos, checkedTodo, ...nextTodos]
     setTodos(newTodos)
-    console.log(prevTodos)
-    console.log(nextTodos)
   }
   
   const handleSelectChange = (e) => {
     setCurrentFilter(e.target.value)
   }
+
+  const handleEdit = (itemClicked) => {
+    setIsEditMode(true)
+    console.log(isEditMode)
+
+    const editingTodoIdx = todos.findIndex(item => item === itemClicked)
+    const editingTodo = todos[editingTodoIdx]
+    const newValue = editingTodo.description
+
+    if (isEditMode === true) {
+      setButtonText('Editar')
+      setInputValue(newValue)
+    } else {
+      setButtonText('Publicar')
+      setInputValue('cochinada')
+    }
+}
+
+  const editTodo = (itemClicked) => {
+
+    if (isEditMode === true) {
+      const editingTodoIdx = todos.filter(item => item === itemClicked)
+      const editingTodo = todos[editingTodoIdx]
+      editingTodo.description = inputValue
+
+      const prevTodos = todos.slice(0, editingTodoIdx)
+      const nextTodos = todos.slice(editingTodoIdx+1, todos.length)
+
+      const newTodos = [...prevTodos, editingTodo, ...nextTodos]
+      setTodos(newTodos)
+
+      
+    }
+
+    setIsEditMode(false)
+    if (isEditMode === false) {
+      setButtonText('Publicar')
+    } else {
+    }
+  }
+
 
   return (
     <div>
@@ -96,15 +137,14 @@ const App = () => {
       </select>
       
       <form onSubmit={handleSubmit}>
-      <input 
-       value= {inputValue}
-       onChange={handleChange}
-       placeholder='Ingresar todo...' />
+        <input 
+        value= {inputValue}
+        onChange={handleChange}
+        placeholder='Ingresar todo...' />
 
-      <button>Publicar</button>
+        <button onClick={editTodo}>{buttonText}</button>
       </form>
 
-      
       {todos.filter(filterFn).map(item => {
         return (
           <Todo
@@ -113,12 +153,34 @@ const App = () => {
             isChecked={item.checked}
             onCheck={handleCheck}
             deleteTodo={() => deleteTodo(item)}
+            editTodo={() => handleEdit(item)}
+            // () => editTodo(item)
           />
         )
       })}
-      
     </div>
   );
 }
 
 export default App;
+
+
+
+
+
+  // const editTodo = (itemClicked, text) => {
+  //   // const editingTodo = todos.map(item => (item.description === text ? setInputValue(itemClicked) : item ))
+  //   //   setTodos(editingTodo)
+
+  //   // const editingTodo = todos.filter(item => item.description === itemClicked)
+  //   // setInputValue(editingTodo)
+  //   // console.log(editingTodo)
+
+  //   // const editingTodoIdx = todos.findIndex(item => item.description === text)
+  //   // const editingTodo = todos[editingTodoIdx]
+  //   // console.log(editingTodo)
+
+  //   if(itemClicked === itemClicked) {
+
+  //   }
+  // }
