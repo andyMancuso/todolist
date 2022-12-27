@@ -3,17 +3,23 @@ import { useState } from 'react';
 import Todo from './components/Todo'
 
 
+
+
 const App = () => {
 
-  const [todos, setTodos] = useState([
-    {
-      description: 'Regar plantas',
-      checked: false
-    }, {
-      description: 'Cortar uñas',
-      checked: true
-    }
-  ])
+  const [todos, setTodos] = useState(JSON.parse(localStorage.getItem("list")) || [])
+  
+  // ([
+  //   {
+  //     description: 'Regar plantas',
+  //     checked: false,
+  //     favorited: true
+  //   }, {
+  //     description: 'Cortar uñas',
+  //     checked: true,
+  //     favorited: false
+  //   }
+  // ])
 
   const [inputValue, setInputValue] = useState('')
 
@@ -34,6 +40,10 @@ const App = () => {
       return item.checked === false
     }
 
+    if (currentFilter === 'Importantes') {
+      return item.favorited === true
+    }
+    
     return true
   }
 
@@ -61,12 +71,13 @@ const App = () => {
       const newTodo = {
         description: inputValue,
         checked: false,
-        filter: currentFilter
+        favorited: false
       }
 
       const list = [...todos, newTodo]
       setTodos(list)
       setInputValue('')
+      localStorage.setItem("list", JSON.stringify(list));
 
     } else {
       const editingTodo = todos[editingIdx]
@@ -76,7 +87,6 @@ const App = () => {
       const nextTodos = todos.slice(editingIdx + 1, todos.length)
 
       const newTodos = [...prevTodos, editingTodo, ...nextTodos]
-      console.log(newTodos)
       setTodos(newTodos)
 
       setIsEditMode(false)
@@ -113,6 +123,20 @@ const App = () => {
     setInputValue(editingTodo.description)
   }
 
+  const handleFavorite = (itemClicked) => {
+    const important = todos.find(item => item === itemClicked)
+
+    if (important.favorited === true) {
+      important.favorited = false
+    } else {
+      important.favorited = true
+    }
+
+    localStorage.setItem("important", JSON.stringify(important));
+    console.log(important)
+
+  }
+
   return (
     <div>
 
@@ -124,6 +148,7 @@ const App = () => {
         <option value='Todas'>Todas</option>
         <option value='Pendientes'>Pendientes</option>
         <option value='Completadas'>Completadas</option>
+        <option value='Importantes'>Importantes</option>
       </select>
 
       <form onSubmit={handleSubmit}>
@@ -139,13 +164,15 @@ const App = () => {
 
       {todos.filter(filterFn).map(item => {
         return (
-          <Todo
+          <Todo 
             key={item.description}
             text={item.description}
             isChecked={item.checked}
             onCheck={handleCheck}
             deleteTodo={() => deleteTodo(item)}
             editTodo={() => handleEdit(item)}
+            favoriteTodo={() => handleFavorite(item)}
+            isImportant={item.favorited}
           />
         )
       })}
