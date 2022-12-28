@@ -124,16 +124,20 @@ const App = () => {
   }
 
   const handleFavorite = (itemClicked) => {
-    const important = todos.find(item => item === itemClicked)
 
-    if (important.favorited === true) {
-      important.favorited = false
-    } else {
-      important.favorited = true
-    }
+    const importantIdx = todos.findIndex(item => item === itemClicked)
+    const importantItem = todos[importantIdx]
 
-    localStorage.setItem("important", JSON.stringify(important));
-    console.log(important)
+    const newImportant = {...importantItem}
+
+    newImportant.favorited = !newImportant.favorited
+
+    const prevTodos = todos.slice(0, importantIdx)
+    const nextTodos = todos.slice(importantIdx+1, todos.length)
+
+    const newTodos = [...prevTodos, newImportant, ...nextTodos]
+
+    setTodos(newTodos)
 
   }
 
