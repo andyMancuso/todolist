@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Todo from './components/Todo'
 
@@ -7,7 +7,15 @@ import Todo from './components/Todo'
 
 const App = () => {
 
-  const [todos, setTodos] = useState(JSON.parse(localStorage.getItem("list")) || [])
+  const [todos, setTodos] = useState(JSON.parse(localStorage.getItem('listita')) || [])
+
+  // JSON.parse(localStorage.getItem("list")) || 
+
+  useEffect (() => {
+    const newTodos = todos
+    window.localStorage.setItem('listita', JSON.stringify(newTodos))
+    console.log(newTodos)
+  }, [todos])
   
   // ([
   //   {
@@ -77,7 +85,7 @@ const App = () => {
       const list = [...todos, newTodo]
       setTodos(list)
       setInputValue('')
-      localStorage.setItem("list", JSON.stringify(list));
+      localStorage.setItem('list', JSON.stringify(list));
 
     } else {
       const editingTodo = todos[editingIdx]
