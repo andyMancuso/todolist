@@ -1,33 +1,16 @@
 import { useState, useEffect } from 'react';
-
+import Selected from './components/Select';
 import Todo from './components/Todo'
-
-
 
 
 const App = () => {
 
   const [todos, setTodos] = useState(JSON.parse(localStorage.getItem('listita')) || [])
 
-  // JSON.parse(localStorage.getItem("list")) || 
-
   useEffect (() => {
-    const newTodos = todos
-    window.localStorage.setItem('listita', JSON.stringify(newTodos))
-    console.log(newTodos)
+    window.localStorage.setItem('listita', JSON.stringify(todos))
   }, [todos])
   
-  // ([
-  //   {
-  //     description: 'Regar plantas',
-  //     checked: false,
-  //     favorited: true
-  //   }, {
-  //     description: 'Cortar uñas',
-  //     checked: true,
-  //     favorited: false
-  //   }
-  // ])
 
   const [inputValue, setInputValue] = useState('')
 
@@ -36,6 +19,16 @@ const App = () => {
   const [isEditMode, setIsEditMode] = useState(false)
 
   const [editingIdx, setEditingIdx] = useState()
+
+  const [defaultCategories] = useState ([
+    { value: 'Todas', label: 'Todas', key: 'Todas' },
+    { value: 'Pendientes', label: 'Pendientes', key: 'Pendientes'  },
+    { value: 'Completadas', label: 'Completadas', key: 'Completadas' },
+    { value: 'Importantes', label: 'Importantes', key: 'Importantes' }
+  ])
+
+
+
 
 
 
@@ -149,6 +142,16 @@ const App = () => {
 
   }
 
+  // const options = (item) => {
+  //   defaultCategories.values.map(item => {
+  //     return(
+  //       <option value={item.value}>{item.label}</option>
+  //       )
+  //    })
+  // }
+
+
+
   return (
     <div>
 
@@ -156,12 +159,30 @@ const App = () => {
         Todo's Mancussi
       </h1>
 
-      <select onChange={handleSelectChange} value={currentFilter}>
-        <option value='Todas'>Todas</option>
-        <option value='Pendientes'>Pendientes</option>
-        <option value='Completadas'>Completadas</option>
-        <option value='Importantes'>Importantes</option>
-      </select>
+      {defaultCategories.map(item => {
+        return(
+          <Selected
+          label={item.label}
+          value={item.value}
+          key={item.key}
+          />
+        )
+      })}
+      
+      {/* <Selected
+        options={defaultCategories}
+        onChange={handleSelectChange}
+        value={currentFilter}
+       /> */}
+
+       {/* <select>
+       {defaultCategories.map((value, label) => <option value={value}>{label}</option> )}
+       </select> */}
+      <form>
+       <input/>
+       <button>addCat</button>
+      </form>
+
 
       <form onSubmit={handleSubmit}>
         <input
@@ -173,6 +194,8 @@ const App = () => {
           {isEditMode ? 'Editar' : 'Publicar'}
         </button>
       </form>
+
+
 
       {todos.filter(filterFn).map(item => {
         return (
