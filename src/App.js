@@ -20,12 +20,14 @@ const App = () => {
 
   const [editingIdx, setEditingIdx] = useState()
 
-  const [defaultCategories] = useState ([
+  const [defaultCategories, setDefaultCategories] = useState([
     { value: 'Todas', label: 'Todas', key: 'Todas' },
     { value: 'Pendientes', label: 'Pendientes', key: 'Pendientes'  },
     { value: 'Completadas', label: 'Completadas', key: 'Completadas' },
     { value: 'Importantes', label: 'Importantes', key: 'Importantes' }
   ])
+
+  const [categoryInput, setCategoryInput] = useState('')
 
 
 
@@ -142,13 +144,28 @@ const App = () => {
 
   }
 
-  // const options = (item) => {
-  //   defaultCategories.values.map(item => {
-  //     return(
-  //       <option value={item.value}>{item.label}</option>
-  //       )
-  //    })
-  // }
+  const handleCategoryChange = (e) => {
+    const newText = e.target.value
+    setCategoryInput(newText)
+    console.log(categoryInput)
+    
+  }
+
+  const handleCategorySubmit = (e) => {
+    e.preventDefault()
+
+    const newCategory = {
+      value: categoryInput,
+      label: categoryInput,
+      key: categoryInput
+      
+    }
+    const newList = [...defaultCategories, newCategory]
+    setDefaultCategories(newList)
+    setCategoryInput('')
+    localStorage.setItem('newList', JSON.stringify(newList));
+  }
+
 
 
 
@@ -159,28 +176,26 @@ const App = () => {
         Todo's Mancussi
       </h1>
 
+      <select onChange={handleSelectChange}>
       {defaultCategories.map(item => {
         return(
+          
           <Selected
-          label={item.label}
+          label={item.value}
           value={item.value}
           key={item.key}
           />
+          
         )
       })}
-      
-      {/* <Selected
-        options={defaultCategories}
-        onChange={handleSelectChange}
-        value={currentFilter}
-       /> */}
-
-       {/* <select>
-       {defaultCategories.map((value, label) => <option value={value}>{label}</option> )}
-       </select> */}
-      <form>
-       <input/>
-       <button>addCat</button>
+      </select>
+ 
+      <form onSubmit={handleCategorySubmit}>
+       <input
+       value={categoryInput}
+       onChange={handleCategoryChange}
+       />
+       <button onClick={handleCategorySubmit}>addCat</button>
       </form>
 
 
