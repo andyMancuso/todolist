@@ -1,7 +1,7 @@
-const Selected = ({label, value}) => {
+const Selected = ({value}) => {
 
     return (
-        <option value={value}>{label}</option>
+        <option value={value} key={value}>{value}</option>
     );
     
 } 

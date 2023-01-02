@@ -9,32 +9,51 @@ const App = () => {
 
   useEffect (() => {
     window.localStorage.setItem('listita', JSON.stringify(todos))
+    console.log(todos)
   }, [todos])
-  
 
   const [inputValue, setInputValue] = useState('')
 
-  const [currentFilter, setCurrentFilter] = useState('Todas')
+  const [currentFilter, setCurrentFilter] = useState('')
+
+  useEffect(() => {
+    console.log(currentFilter)
+  }, [currentFilter])
 
   const [isEditMode, setIsEditMode] = useState(false)
 
   const [editingIdx, setEditingIdx] = useState()
 
-  const [defaultCategories, setDefaultCategories] = useState([
-    { value: 'Todas', label: 'Todas', key: 'Todas' },
-    { value: 'Pendientes', label: 'Pendientes', key: 'Pendientes'  },
-    { value: 'Completadas', label: 'Completadas', key: 'Completadas' },
-    { value: 'Importantes', label: 'Importantes', key: 'Importantes' }
+  const [defaultCategories, setDefaultCategories] = useState(JSON.parse(localStorage.getItem('newList')) || [
+
   ])
+
+  useEffect (() => {
+    window.localStorage.setItem('newList', JSON.stringify(defaultCategories))
+    
+  }, [defaultCategories])
+    
+  //   [
+  //   { value: 'Todas', label: 'Todas', key: 'Todas' },
+  //   { value: 'Pendientes', label: 'Pendientes', key: 'Pendientes'  },
+  //   { value: 'Completadas', label: 'Completadas', key: 'Completadas' },
+  //   { value: 'Importantes', label: 'Importantes', key: 'Importantes' }
+  // ]
 
   const [categoryInput, setCategoryInput] = useState('')
 
+  const [isCategoryEdit, setIsCategoryEdit] = useState(false)
 
-
+  const [editCategoryIdx, setEditCategoryIdx] = useState()
 
 
 
   const filterFn = (item) => {
+    
+    if(currentFilter === 'Todas') {
+      return item
+    }
+
     if (currentFilter === 'Completadas') {
       return item.checked === true
     }
@@ -45,9 +64,12 @@ const App = () => {
 
     if (currentFilter === 'Importantes') {
       return item.favorited === true
+    } 
+    
+    else {
+      return item.category === currentFilter
     }
     
-    return true
   }
 
   const handleChange = (e) => {
@@ -74,7 +96,8 @@ const App = () => {
       const newTodo = {
         description: inputValue,
         checked: false,
-        favorited: false
+        favorited: false,
+        category: currentFilter
       }
 
       const list = [...todos, newTodo]
@@ -141,33 +164,92 @@ const App = () => {
     const newTodos = [...prevTodos, newImportant, ...nextTodos]
 
     setTodos(newTodos)
-
   }
 
   const handleCategoryChange = (e) => {
     const newText = e.target.value
     setCategoryInput(newText)
-    console.log(categoryInput)
-    
   }
 
   const handleCategorySubmit = (e) => {
     e.preventDefault()
 
-    const newCategory = {
-      value: categoryInput,
-      label: categoryInput,
-      key: categoryInput
+
+
+    if (categoryInput === '') {
+      alert('Por favor ingrese el nombre de la categoría c:')
+      return
+    }
+
+    if (!isCategoryEdit) {
+
+      const alreadyExist = defaultCategories.some(item => categoryInput === item.key)
+
+      if (alreadyExist) {
+        alert('La categoría intentas agregar ya existe en la lista')
+        return
+      }
+
+      const newCategory = {
+        value: categoryInput,
+        label: categoryInput,
+        key: categoryInput
+      }
+      const newList = [...defaultCategories, newCategory]
+      setDefaultCategories(newList)
+      setCategoryInput('')
+      
+      localStorage.setItem('newList', JSON.stringify(newList));
+      
+    } 
+    
+    else {
+      const editedCategory = defaultCategories[editCategoryIdx]
+      const editCategoryIdx = defaultCategories.findIndex(item => item.value === currentFilter)
+      const editingCategory = defaultCategories[editCategoryIdx]
+      
+      editedCategory.value = categoryInput
+      
+      // editingCategory = {
+      //   value: categoryInput,
+      //   label: categoryInput,
+      //   key: categoryInput
+      // }
+      
+      // newCategory.value = categoryInput
+      // newCategory.label = categoryInput
+      // newCategory.key = categoryInput
+
+      const prevCategories = defaultCategories.slice(0, editCategoryIdx)
+      const nextCategories = defaultCategories.slice(editCategoryIdx + 1, todos.length)
+
+      const newCategories = [...prevCategories, editedCategory, ...nextCategories]
+      setDefaultCategories(newCategories)
+      
+      setIsCategoryEdit(false)
+      setCategoryInput('')
       
     }
-    const newList = [...defaultCategories, newCategory]
-    setDefaultCategories(newList)
-    setCategoryInput('')
-    localStorage.setItem('newList', JSON.stringify(newList));
   }
 
+  const deleteCategory = () => {
 
+    const newCategories = defaultCategories.filter(item => item.key !== currentFilter)
+    setDefaultCategories(newCategories)
 
+    const deleteCategoryTodos = todos.filter(item => item.category !== currentFilter)
+
+    setTodos(deleteCategoryTodos)
+
+  // borrar última categoría
+
+  }
+
+  const editCategory = () => {
+    setIsCategoryEdit(true)
+    setCategoryInput(currentFilter)
+
+  }
 
   return (
     <div>
@@ -175,28 +257,31 @@ const App = () => {
       <h1>
         Todo's Mancussi
       </h1>
-
+  
+      
       <select onChange={handleSelectChange}>
       {defaultCategories.map(item => {
         return(
-          
           <Selected
           label={item.value}
           value={item.value}
-          key={item.key}
+          key={item.value}
           />
-          
         )
       })}
       </select>
- 
+      {' '}
+      <button onClick={deleteCategory}>X</button>
+
       <form onSubmit={handleCategorySubmit}>
        <input
        value={categoryInput}
        onChange={handleCategoryChange}
+       placeholder='Ingresar nombre categoría...'
        />
-       <button onClick={handleCategorySubmit}>addCat</button>
+       <button onClick={handleCategorySubmit}>{isCategoryEdit ? 'Editar' : 'Crear'}</button>
       </form>
+       <button onClick={editCategory}>✏️</button>
 
 
       <form onSubmit={handleSubmit}>
@@ -211,7 +296,6 @@ const App = () => {
       </form>
 
 
-
       {todos.filter(filterFn).map(item => {
         return (
           <Todo 
@@ -223,6 +307,7 @@ const App = () => {
             editTodo={() => handleEdit(item)}
             favoriteTodo={() => handleFavorite(item)}
             isImportant={item.favorited}
+            category={item.category}
           />
         )
       })}
