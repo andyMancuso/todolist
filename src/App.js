@@ -9,7 +9,7 @@ const App = () => {
 
   useEffect (() => {
     window.localStorage.setItem('listita', JSON.stringify(todos))
-    console.log(todos)
+    console.log('todos effect', todos)
   }, [todos])
 
   const [inputValue, setInputValue] = useState('')
@@ -30,7 +30,10 @@ const App = () => {
 
   useEffect (() => {
     window.localStorage.setItem('newList', JSON.stringify(defaultCategories))
-    
+    console.log('defCat effect', defaultCategories)
+    // return(
+      
+    // )
   }, [defaultCategories])
     
   //   [
@@ -174,8 +177,6 @@ const App = () => {
   const handleCategorySubmit = (e) => {
     e.preventDefault()
 
-
-
     if (categoryInput === '') {
       alert('Por favor ingrese el nombre de la categoría c:')
       return
@@ -192,49 +193,84 @@ const App = () => {
 
       const newCategory = {
         value: categoryInput,
-        label: categoryInput,
+        // label: categoryInput,
         key: categoryInput
       }
       const newList = [...defaultCategories, newCategory]
       setDefaultCategories(newList)
       setCategoryInput('')
+      // setCurrentFilter(newCategory.label)
       
-      localStorage.setItem('newList', JSON.stringify(newList));
-      
-    } 
+      localStorage.setItem('newList', JSON.stringify(newList));   
+    }
     
     else {
-      const editedCategory = defaultCategories[editCategoryIdx]
+      
       const editCategoryIdx = defaultCategories.findIndex(item => item.value === currentFilter)
       const editingCategory = defaultCategories[editCategoryIdx]
+      console.log('return cat', editingCategory)
       
-      editedCategory.value = categoryInput
-      
-      // editingCategory = {
-      //   value: categoryInput,
-      //   label: categoryInput,
-      //   key: categoryInput
-      // }
-      
-      // newCategory.value = categoryInput
-      // newCategory.label = categoryInput
-      // newCategory.key = categoryInput
+      editingCategory.value = categoryInput
+      editingCategory.key = categoryInput
+       
+      for (let i = 0; i < todos.length; i++) {
+          if (todos[i].category === currentFilter) {
+              todos[i].category = categoryInput
+              setTodos(todos)
 
-      const prevCategories = defaultCategories.slice(0, editCategoryIdx)
-      const nextCategories = defaultCategories.slice(editCategoryIdx + 1, todos.length)
+              const prevCategories = defaultCategories.slice(0, editCategoryIdx)
+              const nextCategories = defaultCategories.slice(editCategoryIdx + 1, todos.length)
+        
+              const newCategories = [...prevCategories, editingCategory, ...nextCategories]
+              setDefaultCategories(newCategories)
 
-      const newCategories = [...prevCategories, editedCategory, ...nextCategories]
-      setDefaultCategories(newCategories)
+              setIsCategoryEdit(false)
+              setCategoryInput('')
+
+          } 
+            else{
+
+              const prevCategories = defaultCategories.slice(0, editCategoryIdx)
+              const nextCategories = defaultCategories.slice(editCategoryIdx + 1, todos.length)
+        
+              const newCategories = [...prevCategories, editingCategory, ...nextCategories]
+
+              setDefaultCategories(newCategories)
+              setIsCategoryEdit(false)
+              setCategoryInput('')
+            }
+        } 
+      }
+
+
+
+      // const oldTodos = todos.filter(item => item.category === currentFilter)
+      // const oldTodosIdx = oldTodos.findIndex(item => item.category === currentFilter)
+      // const oldestTodos = oldTodos[oldTodosIdx]
+    
       
-      setIsCategoryEdit(false)
-      setCategoryInput('')
+      // editingCategory.value = categoryInput
+      // editCategory.label = categoryInput
       
-    }
+      // oldTodos.forEach(item => (
+        //   item.category = editingCategory.value
+        // ))
+
+   
+      //   console.log('oldTodos', oldTodos)
+
+      // const prevTodos = todos.slice(0, oldTodosIdx)
+      // const newTodos = todos.slice(oldTodosIdx + 1, todos.length)
+
+      // const newerTodos = [...prevTodos, oldestTodos, newTodos]
+
+      // setTodos(newerTodos)
   }
+  
 
   const deleteCategory = () => {
 
-    const newCategories = defaultCategories.filter(item => item.key !== currentFilter)
+    const newCategories = defaultCategories.filter(item => item.value !== currentFilter)
     setDefaultCategories(newCategories)
 
     const deleteCategoryTodos = todos.filter(item => item.category !== currentFilter)
@@ -248,7 +284,6 @@ const App = () => {
   const editCategory = () => {
     setIsCategoryEdit(true)
     setCategoryInput(currentFilter)
-
   }
 
   return (
@@ -265,7 +300,7 @@ const App = () => {
           <Selected
           label={item.value}
           value={item.value}
-          key={item.value}
+          key={item.key}
           />
         )
       })}
