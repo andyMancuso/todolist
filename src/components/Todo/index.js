@@ -1,4 +1,4 @@
-const Todo = ({ text, deleteTodo, editTodo, isChecked, favoriteTodo, isImportant, onCheck }) => {
+const Todo = ({ text, deleteTodo, editTodo, isChecked, favoriteTodo, isImportant, onCheck, category }) => {
 
 
   const handleChange = (e) => {
@@ -18,7 +18,7 @@ const Todo = ({ text, deleteTodo, editTodo, isChecked, favoriteTodo, isImportant
         >{isImportant ? '🟡' : '🟣'}</button>
         {' '}
         <span style={{textDecoration: isChecked ? 'line-through' : 'unset' }}>
-          {text}
+          {text} {category ? `(${category})` : '' }
         </span>
         {' '}
         <button onClick={deleteTodo}>X</button>

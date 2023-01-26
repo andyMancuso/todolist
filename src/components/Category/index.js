@@ -15,21 +15,26 @@ const Category = ({ name , onEdit, onRemove}) => {
 
   const handleChange = (e) => setInputValue(e.target.value)
 
-  const save = () => onEdit({ old: name, current: inputValue })
+  const save = (e) => {
+    e.preventDefault()
+    onEdit({ old: name, current: inputValue })
+  } 
+    
+
+  const remove = () => onRemove(name)
 
 
-  console.log(isEdit)
   return (
-    <div>
+    <form onSubmit={save}>
       {isEdit ? <input autoFocus value={inputValue} onChange={handleChange}/> : name}
       {' '}
       {isEdit 
-        ? <button onClick={save}>💾</button>
+        ? <button>💾</button>
         : <button onClick={toggleEdit}>✏️</button>
       }
       {' '}
-      <button onClick={onRemove}>X</button>
-    </div>
+      <button type='button' onClick={remove}>X</button>
+    </form>
   )
 }
 

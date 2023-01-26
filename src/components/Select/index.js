@@ -1,10 +1,13 @@
-const Select = ({value, key, options, onChange}) => {
+const Select = ({defaultValue, options, onChange, hasEmptyOption= true}) => {
 
   return (
-    <select onChange={onChange}>
+    <select defaultValue={defaultValue} onChange={onChange}>
+      {hasEmptyOption && (
+        <option value={''}>Selecciona una categoria</option>
+      ) }
       {
         options.map(opt => (
-          <option value={opt.value} key={opt.key}>{opt.value}</option>
+          <option value={opt.value} key={opt.value}>{opt.value}</option>
 
         )
         )
