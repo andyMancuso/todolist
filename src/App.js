@@ -3,48 +3,31 @@ import { useState } from 'react'
 import Home from "./pages/Home";
 import Categories from './pages/Categories'
 
+import {
+  BrowserRouter,
+  Link,
+  Route,
+  Routes,
+} from "react-router-dom";
+
 
 const App = () => {
 
-  const [currentPage, setCurrentPage] = useState ('home')
-
   const [categoriesList, setCategoriesList] = useState (['Compras', 'Mochila'])
 
-  const goToPage = (page) => {
-    setCurrentPage(page)
-  }
-
-  if (currentPage === 'categories') {
-    return (
-      <>
-        <button onClick={() => goToPage('home')}>Home</button>
-        {' '}
-        <button onClick={() => goToPage('categories')}>Categories</button>
-        <br/>
-        <br/>
-        <br/>
-        <Categories
-          categoriesList={categoriesList}
-          setCategoriesList={setCategoriesList}
-        />
-        
-      </>
-    )
-  }
 
   return (
-    <>
-      <button onClick={() => goToPage('home')}>Home</button>
-      {' '}
-      <button onClick={() => goToPage('categories')}>Categories</button>
-      <br/>
-      <br/>
-      <br/>
-      <Home
+    <BrowserRouter>
+    <Link to='/'>Home</Link>
+    <Link to='/categories'>Categories</Link>
+    <Routes>
+      <Route path='/' element={<Home categoriesList={categoriesList} />} />
+      <Route path='/categories' element={<Categories
         categoriesList={categoriesList}
-
-      />
-    </>
+        setCategoriesList={setCategoriesList}
+        />} />
+    </Routes>
+    </BrowserRouter>
   )
 }
 

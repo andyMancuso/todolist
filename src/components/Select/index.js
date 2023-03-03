@@ -4,16 +4,11 @@ const Select = ({defaultValue, options, onChange, hasEmptyOption= true}) => {
     <select defaultValue={defaultValue} onChange={onChange}>
       {hasEmptyOption && (
         <option value={''}>Selecciona una categoria</option>
-      ) }
-      {
-        options.map(opt => (
+      )}
+      {options.map(opt => (
           <option value={opt.value} key={opt.value}>{opt.value}</option>
-
-        )
-        )
-      }
+        ))}
     </select>
-
   );
         
 } 
